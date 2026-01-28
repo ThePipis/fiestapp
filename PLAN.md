@@ -20,6 +20,7 @@ Refactorización de una aplicación monolítica Firebase/React a una arquitectur
 - [x] Configurar TypeScript, ESLint y Prettier.
 - [x] Configurar Tailwind CSS con una paleta de colores premium (HSL).
 - [x] Configurar Supabase Client.
+- [x] Inicializar Git local y estructura de Monorepo.
 
 ### 2. Infraestructura de Base de Datos (Supabase) 🗄️
 - [x] Crear tabla `invitados` con RLS.
