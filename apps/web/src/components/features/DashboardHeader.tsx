@@ -1,16 +1,32 @@
 'use client';
 
-import { Users, DollarSign, Calendar, MapPin, Armchair, Baby, Clock } from 'lucide-react';
+import { Users, DollarSign, Calendar, MapPin, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useEventConfig } from '@/hooks/useEventConfig';
 
+const DEFAULT_CONFIG = {
+  cumpleanera_nombre: 'Mamá Zara',
+  evento_lugar: 'Lima, Perú',
+  evento_fecha: '2026-05-23',
+  evento_hora: '19:00'
+};
+
 export default function DashboardHeader({ resumen }: { resumen: any }) {
   const { config } = useEventConfig();
+  const [renderConfig, setRenderConfig] = useState(DEFAULT_CONFIG);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
+  const [eventYear, setEventYear] = useState(2026);
+  const [eventDateLabel, setEventDateLabel] = useState(DEFAULT_CONFIG.evento_fecha);
 
   useEffect(() => {
-    const targetDate = new Date(`${config.evento_fecha || '2026-05-23'}T${config.evento_hora || '00:00'}:00`);
+    setRenderConfig(config || DEFAULT_CONFIG);
+  }, [config]);
+
+  useEffect(() => {
+    const fecha = renderConfig.evento_fecha || DEFAULT_CONFIG.evento_fecha;
+    const hora = renderConfig.evento_hora || DEFAULT_CONFIG.evento_hora;
+    const targetDate = new Date(`${fecha}T${hora}:00`);
     const timer = setInterval(() => {
       const now = new Date();
       const diff = targetDate.getTime() - now.getTime();
@@ -28,7 +44,6 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
       }
     }, 1000);
 
-    // Initial calc
     const now = new Date();
     const diff = targetDate.getTime() - now.getTime();
     setTimeLeft({
@@ -39,7 +54,21 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
     });
 
     return () => clearInterval(timer);
-  }, [config.evento_fecha, config.evento_hora]);
+  }, [renderConfig.evento_fecha, renderConfig.evento_hora]);
+
+  useEffect(() => {
+    const fecha = renderConfig.evento_fecha || DEFAULT_CONFIG.evento_fecha;
+    const date = new Date(`${fecha}T00:00:00`);
+    if (!Number.isNaN(date.getTime())) {
+      setEventYear(date.getFullYear());
+      setEventDateLabel(
+        new Intl.DateTimeFormat('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }).format(date)
+      );
+    } else {
+      setEventYear(2026);
+      setEventDateLabel(DEFAULT_CONFIG.evento_fecha);
+    }
+  }, [renderConfig.evento_fecha]);
 
   return (
     <header className="relative w-full bg-[#0F172A] min-h-[600px] overflow-hidden rounded-b-[4rem] font-body">
@@ -49,10 +78,10 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-amber-500/30 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto h-full px-6 py-12 md:py-20 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 py-10 md:py-16 lg:py-20 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Column Left: The Portrait Journey */}
+          {/* Column Left: The Portrait */}
           <div className="lg:col-span-5 relative group">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }}
@@ -62,15 +91,16 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
             >
               <img 
                 src="/hero.png" 
-                alt={config.cumpleanera_nombre} 
+                alt={renderConfig.cumpleanera_nombre} 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                suppressHydrationWarning
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-transparent to-transparent opacity-60"></div>
               
               {/* Floating Badge */}
-              <div className="absolute bottom-10 left-10 right-10 p-6 glass-card rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl">
+              <div className="absolute bottom-10 left-10 right-10 p-6 rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl">
                  <p className="text-white/60 text-[10px] uppercase font-black tracking-widest mb-1">El Comienzo del Viaje</p>
-                 <h3 className="text-white font-display text-2xl font-bold">{config.cumpleanera_nombre}</h3>
+                 <h3 className="text-white font-display text-2xl font-bold">{renderConfig.cumpleanera_nombre}</h3>
               </div>
             </motion.div>
             
@@ -88,17 +118,17 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
                 className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-5 py-2.5 rounded-full mb-8"
               >
                 <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
-                <span className="text-amber-400 text-[10px] font-black uppercase tracking-[0.25em]">Celebración {new Date(config.evento_fecha).getFullYear() || 2026}</span>
+                <span className="text-amber-400 text-[10px] font-black uppercase tracking-[0.25em]">Celebración {eventYear}</span>
               </motion.div>
               
-              <h1 className="font-display text-white text-6xl md:text-8xl font-black leading-none tracking-tight mb-6">
+              <h1 className="font-display text-white text-5xl md:text-7xl lg:text-8xl font-black leading-none tracking-tight mb-6">
                  70 <span className="text-transparent bg-clip-text premium-gradient">AÑOS</span>
                  <br />
                  DE LUZ
               </h1>
               
               <p className="text-indigo-100/60 text-lg md:text-xl max-w-xl font-light leading-relaxed mb-10">
-                 Un tributo a la vida, la sabiduría y el amor de {config.cumpleanera_nombre} en su septuagésimo aniversario. 
+                 Un tributo a la vida, la sabiduría y el amor de {renderConfig.cumpleanera_nombre} en su septuagésimo aniversario. 
               </p>
 
               <div className="flex flex-wrap gap-6 items-center">
@@ -108,10 +138,10 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
                     </div>
                     <div>
                        <p className="text-white font-bold text-sm tracking-tight uppercase">
-                         {config.evento_lugar.includes(',') ? config.evento_lugar.split(',')[0] : config.evento_lugar}
+                         {renderConfig.evento_lugar.includes(',') ? renderConfig.evento_lugar.split(',')[0] : renderConfig.evento_lugar}
                        </p>
                        <p className="text-white/40 text-[10px] font-medium tracking-widest uppercase">
-                         {config.evento_lugar.includes(',') ? config.evento_lugar.split(',').slice(1).join(',').trim() : 'Ubicación del evento'}
+                         {renderConfig.evento_lugar.includes(',') ? renderConfig.evento_lugar.split(',').slice(1).join(',').trim() : 'Ubicación del evento'}
                        </p>
                     </div>
                  </div>
@@ -120,89 +150,83 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
                        <Calendar size={22} />
                     </div>
                     <div>
-                       <p className="text-white font-bold text-sm tracking-tight uppercase">
-                          {new Date(config.evento_fecha + 'T00:00:00').toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })}
-                       </p>
-                       <p className="text-white/40 text-[10px] font-medium tracking-widest uppercase">Gran Recepción • {config.evento_hora}</p>
+                       <p className="text-white font-bold text-sm tracking-tight uppercase">{eventDateLabel}</p>
+                       <p className="text-white/40 text-[10px] font-medium tracking-widest uppercase">Gran Recepción • {renderConfig.evento_hora}</p>
                     </div>
                  </div>
               </div>
             </div>
 
             {/* Premium Countdown & Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                {/* Countdown Clock */}
-               <div className="p-8 md:p-10 rounded-[3.5rem] bg-gradient-to-br from-white/10 to-transparent border border-white/10 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-6 opacity-10 text-white group-hover:scale-110 transition-transform duration-500">
+               <div className="p-6 md:p-8 rounded-[2rem] bg-gradient-to-br from-white/10 to-transparent border border-white/10 relative overflow-hidden group">
+                  <div className="absolute top-4 right-4 opacity-10 text-white pointer-events-none">
                      <Clock size={48} />
                   </div>
-                  <p className="text-white/40 text-[10px] uppercase font-black tracking-widest mb-8">Cuenta Regresiva</p>
-                  <div className="flex gap-4 md:gap-6 items-end justify-between md:justify-start">
+                  <p className="text-white/40 text-[10px] uppercase font-black tracking-widest mb-6">Cuenta Regresiva</p>
+                  <div className="grid grid-cols-4 gap-2 md:gap-4">
                      <div className="text-center">
-                        <span className="block text-4xl md:text-6xl font-black text-white leading-none mb-2">{timeLeft.days}</span>
-                        <span className="text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Días</span>
+                        <span className="block text-2xl md:text-4xl lg:text-5xl font-black text-white leading-none mb-1">{timeLeft.days}</span>
+                        <span className="text-[8px] md:text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Días</span>
                      </div>
                      <div className="text-center">
-                        <span className="block text-4xl md:text-6xl font-black text-amber-400 leading-none mb-2">{timeLeft.hours}</span>
-                        <span className="text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Horas</span>
+                        <span className="block text-2xl md:text-4xl lg:text-5xl font-black text-amber-400 leading-none mb-1">{timeLeft.hours}</span>
+                        <span className="text-[8px] md:text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Horas</span>
                      </div>
                      <div className="text-center">
-                        <span className="block text-4xl md:text-6xl font-black text-white/60 leading-none mb-2">{timeLeft.mins}</span>
-                        <span className="text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Min</span>
+                        <span className="block text-2xl md:text-4xl lg:text-5xl font-black text-white/60 leading-none mb-1">{timeLeft.mins}</span>
+                        <span className="text-[8px] md:text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Min</span>
                      </div>
-                     <div className="text-center border-l border-white/10 pl-4 md:pl-6">
-                        <span className="block text-4xl md:text-6xl font-black text-indigo-400 animate-pulse leading-none mb-2">
+                     <div className="text-center border-l border-white/10 pl-2 md:pl-4">
+                        <span className="block text-2xl md:text-4xl lg:text-5xl font-black text-indigo-400 animate-pulse leading-none mb-1">
                            {timeLeft.secs < 10 ? `0${timeLeft.secs}` : timeLeft.secs}
                         </span>
-                        <span className="text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Seg</span>
+                        <span className="text-[8px] md:text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Seg</span>
                      </div>
                   </div>
                </div>
 
-               {/* Quick Stats Journey */}
-               <div className="p-8 md:p-10 rounded-[3.5rem] bg-white/[0.03] border border-white/10 flex flex-col justify-between group">
-                  <p className="text-indigo-200/40 text-[10px] font-black uppercase tracking-widest mb-6">Métricas de Control</p>
-                  <div className="space-y-8">
-                    {/* Confirmados Large */}
-                    <div className="flex justify-between items-center gap-4">
-                       <div className="flex items-center gap-4 md:gap-6">
-                          <div className="p-3 md:p-4 bg-emerald-500/10 rounded-2xl text-emerald-400 group-hover:scale-110 transition-transform">
-                             <Users size={32} />
-                          </div>
-                          <div className="flex flex-col">
-                             <span className="text-4xl md:text-5xl font-black text-white leading-none">{resumen.totalConfirmados}</span>
-                             <span className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mt-1">Confirmados</span>
-                          </div>
-                       </div>
-                       
-                       <div className="flex items-center gap-4 border-l border-white/5 pl-4 md:pl-6">
-                          <div className="text-right">
-                             <span className="text-3xl md:text-4xl font-black text-amber-400 leading-none block mb-1">{resumen.totalPendientes}</span>
-                             <span className="text-white/30 text-[9px] font-black uppercase tracking-widest">Pendientes</span>
-                          </div>
-                       </div>
-                    </div>
-
-                    {/* Progress Bar Larger */}
-                    <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden p-[1px] border border-white/5">
-                        <div 
-                          className="h-full bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full transition-all duration-1000 ease-out"
-                          style={{ width: `${(resumen.totalConfirmados / Math.max(1, resumen.totalLista)) * 100}%` }}
-                        />
-                    </div>
-
-                    {/* Presupuesto Large */}
-                    <div className="flex items-center gap-4 md:gap-6 pt-2 border-t border-white/5">
-                        <div className="p-3 md:p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 group-hover:scale-110 transition-transform">
-                           <DollarSign size={32} />
+               {/* Quick Stats */}
+               <div className="p-6 md:p-8 rounded-[2rem] bg-white/[0.03] border border-white/10 flex flex-col gap-6 overflow-hidden">
+                  <p className="text-indigo-200/40 text-[10px] font-black uppercase tracking-widest">Métricas de Control</p>
+                  
+                  {/* Confirmados Row */}
+                  <div className="flex items-center justify-between gap-4">
+                     <div className="flex items-center gap-4">
+                        <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-400 flex-shrink-0">
+                           <Users size={24} />
                         </div>
-                        <div className="flex flex-col">
-                           <span className="text-3xl md:text-4xl font-black text-white leading-none">
-                              S/ {resumen.totalPagado.toLocaleString('es-PE')}
-                           </span>
-                           <span className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.2em] mt-1">Presupuesto Ejecutado</span>
+                        <div>
+                           <span className="text-3xl md:text-4xl font-black text-white leading-none">{resumen.totalConfirmados}</span>
+                           <span className="block text-[10px] text-emerald-400 font-black uppercase tracking-widest mt-1">Confirmados</span>
                         </div>
-                    </div>
+                     </div>
+                     <div className="text-right border-l border-white/10 pl-4">
+                        <span className="text-2xl md:text-3xl font-black text-amber-400 leading-none">{resumen.totalPendientes}</span>
+                        <span className="block text-[9px] text-white/30 font-black uppercase tracking-widest mt-1">Pendientes</span>
+                     </div>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="w-full bg-white/5 h-2 md:h-3 rounded-full overflow-hidden border border-white/5">
+                     <div 
+                        className="h-full bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full transition-all duration-1000 ease-out"
+                        style={{ width: `${(resumen.totalConfirmados / Math.max(1, resumen.totalLista)) * 100}%` }}
+                     />
+                  </div>
+
+                  {/* Presupuesto Row */}
+                  <div className="flex items-center gap-4 pt-4 border-t border-white/5">
+                     <div className="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 flex-shrink-0">
+                        <DollarSign size={24} />
+                     </div>
+                     <div>
+                        <span className="text-2xl md:text-3xl font-black text-white leading-none">
+                           S/ {resumen.totalPagado.toLocaleString('es-PE')}
+                        </span>
+                        <span className="block text-[10px] text-indigo-400 font-black uppercase tracking-widest mt-1">Presupuesto Ejecutado</span>
+                     </div>
                   </div>
                </div>
             </div>
@@ -210,8 +234,8 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
         </div>
       </div>
 
-      {/* Aesthetic mask on bottom to blend with next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-50 to-transparent"></div>
+      {/* Aesthetic mask on bottom */}
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0F172A] to-transparent pointer-events-none"></div>
     </header>
   );
 }

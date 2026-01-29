@@ -87,7 +87,7 @@ export default function GuestForm() {
     setIsModalOpen(false);
   };
 
-  const inputClasses = "w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-700 outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all";
+  const inputClasses = "w-full bg-[#0F172A] border border-slate-700 rounded-2xl px-6 py-4 text-sm font-bold text-white outline-none focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-600";
   const labelClasses = "block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2 ml-4";
 
   return (
@@ -141,8 +141,8 @@ export default function GuestForm() {
                     flex items-center justify-center gap-2 py-4 px-6 rounded-2xl font-bold text-sm uppercase tracking-wider
                     transition-all duration-200 border-2
                     ${isSelected 
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-200' 
-                      : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
+                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/30' 
+                      : 'bg-[#0F172A] text-slate-400 border-slate-700 hover:border-indigo-500 hover:text-indigo-400'
                     }
                   `}
                 >
@@ -159,13 +159,13 @@ export default function GuestForm() {
         <button 
           type="button" 
           onClick={() => setIsModalOpen(false)}
-          className="w-full bg-white text-slate-500 font-black uppercase tracking-widest text-xs py-5 rounded-3xl border-2 border-slate-200 hover:border-slate-300 transition-all"
+          className="w-full bg-[#0F172A] text-slate-400 font-black uppercase tracking-widest text-xs py-5 rounded-3xl border-2 border-slate-700 hover:border-slate-500 transition-all"
         >
           Cerrar
         </button>
         <button 
           type="submit" 
-          className="w-full premium-gradient text-white font-black uppercase tracking-widest text-xs py-5 rounded-3xl shadow-xl shadow-indigo-200 active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="w-full premium-gradient text-white font-black uppercase tracking-widest text-xs py-5 rounded-3xl shadow-xl shadow-indigo-500/20 active:scale-95 transition-all flex items-center justify-center gap-2 border border-white/10"
         >
           <Save className="w-4 h-4" />
           {editingId ? 'Guardar Cambios' : 'Guardar Cambios'}

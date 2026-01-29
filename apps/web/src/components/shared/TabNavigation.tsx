@@ -17,7 +17,7 @@ export default function TabNavigation() {
 
   return (
     <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none px-4">
-      <nav className="pointer-events-auto bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl shadow-indigo-900/10 rounded-[2.5rem] p-2 flex items-center gap-1 max-w-full overflow-x-auto no-scrollbar ring-1 ring-slate-900/5">
+      <nav className="pointer-events-auto bg-[#0F172A]/90 backdrop-blur-xl border border-white/10 shadow-2xl shadow-black/50 rounded-[2.5rem] p-2 flex items-center gap-1 max-w-full overflow-x-auto no-scrollbar ring-1 ring-white/5">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
@@ -25,18 +25,18 @@ export default function TabNavigation() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`relative flex items-center gap-3 px-5 py-4 rounded-[2rem] transition-all duration-300 group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${ 
-                isActive ? '' : 'hover:bg-slate-50 active:scale-95'
+                isActive ? '' : 'hover:bg-white/5 active:scale-95'
               }`}
             >
               {isActive && (
                 <motion.div
                   layoutId="activeTabPill"
-                  className="absolute inset-0 bg-[#0F172A] rounded-[2rem] shadow-lg"
+                  className="absolute inset-0 bg-indigo-600 rounded-[2rem] shadow-[0_0_20px_rgba(79,70,229,0.5)]"
                   transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
                 />
               )}
               
-              <div className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`}>
+              <div className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
                 <tab.icon size={22} className="stroke-[2.5px]" />
               </div>
               

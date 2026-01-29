@@ -50,11 +50,11 @@ export default function Home() {
   }, [guests, expenses]);
 
   return (
-    <main className="min-h-screen bg-slate-50 pb-20">
+    <main className="min-h-screen bg-[#0F172A] pb-32">
       <DashboardHeader resumen={resumen} />
       <TabNavigation />
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}

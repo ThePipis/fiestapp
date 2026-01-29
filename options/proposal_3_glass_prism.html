@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Propuesta 3: Ethereal Prism</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.2);
+            --text: #ffffff;
+            --accent: #A855F7; /* Purple */
+        }
+
+        body {
+            background: #000;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Ambient Background */
+        .aurora {
+            position: absolute;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, rgba(0,0,0,0) 70%);
+            top: -20%;
+            left: -10%;
+            filter: blur(80px);
+            animation: float 10s infinite alternate;
+        }
+
+        .aurora.secondary {
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(0,0,0,0) 70%);
+            top: auto;
+            bottom: -20%;
+            left: auto;
+            right: -10%;
+            animation: float 15s infinite alternate-reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Glass Cards container */
+        .prism-container {
+            display: flex;
+            gap: 2rem;
+            z-index: 10;
+            perspective: 1000px;
+        }
+
+        .glass-card {
+            width: 300px;
+            height: 500px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-20px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Typography */
+        h1 {
+            font-weight: 100;
+            font-size: 3rem;
+            margin: 0;
+            letter-spacing: -2px;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2rem;
+            opacity: 0.6;
+        }
+
+        /* Data Viz */
+        .ring-chart {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            margin: 2rem auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ring-chart::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            border-left-color: transparent;
+            border-bottom-color: transparent;
+            transform: rotate(45deg);
+        }
+
+        .number-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        /* Hover Reveal */
+        .details {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover .details {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="aurora"></div>
+    <div class="aurora secondary"></div>
+
+    <div class="prism-container">
+        <!-- Card 1: Time -->
+        <div class="glass-card">
+            <div>
+                <span class="label">La Celebración</span>
+                <h1>70 AÑOS</h1>
+            </div>
+            
+            <div class="ring-chart">
+                <span class="number-display">114</span>
+            </div>
+            
+            <div class="details">
+                <p>23 de Mayo, 2026</p>
+                <p>Dias Restantes</p>
+            </div>
+        </div>
+
+        <!-- Card 2: Status -->
+        <div class="glass-card" style="height: 450px; align-self: flex-end;">
+            <div>
+                <span class="label">Estado Actual</span>
+                <h1>Progreso</h1>
+            </div>
+
+            <div style="margin-top: auto;">
+                <h2 style="font-size: 4rem; margin:0;">85%</h2>
+                <div style="height: 4px; background: rgba(255,255,255,0.1); width: 100%; margin-top: 1rem; border-radius: 2px;">
+                    <div style="height: 100%; background: var(--accent); width: 85%; box-shadow: 0 0 10px var(--accent);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

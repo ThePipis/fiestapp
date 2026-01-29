@@ -6,12 +6,32 @@ import DataTable from '@/components/ui/DataTable';
 import { useAppStore } from '@/store/useAppStore';
 import { exportGuestsToExcel, exportGuestsToPDF } from '@/lib/exportService';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { Search, X, Filter, LayoutGrid } from 'lucide-react';
+import { useState } from 'react';
 
+// Colores Semáforo Estilo Neón/Dark
 const ESTADOS = [
-  { value: 'Pendiente', label: 'PENDIENTE', color: 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' },
-  { value: 'Confirmado', label: 'CONFIRMADO', color: 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' },
-  { value: 'Cancelado', label: 'CANCELADO', color: 'bg-rose-100 text-rose-600 border-rose-200 hover:bg-rose-200' },
+  { value: 'Pendiente', label: 'PENDIENTE', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20' },
+  { value: 'Confirmado', label: 'CONFIRMADO', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20' },
+  { value: 'Cancelado', label: 'CANCELADO', color: 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20' },
 ];
+
+const RESPONSABLE_COLORS = [
+  'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  'bg-purple-500/20 text-purple-300 border-purple-500/30',
+  'bg-pink-500/20 text-pink-300 border-pink-500/30',
+  'bg-orange-500/20 text-orange-300 border-orange-500/30',
+  'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+];
+
+function getResponsableColor(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % RESPONSABLE_COLORS.length;
+  return RESPONSABLE_COLORS[index];
+}
 
 function StatusDropdown({ currentStatus, onSelect }: { currentStatus: string | null; onSelect: (status: string) => void }) {
   const current = ESTADOS.find(e => e.value === currentStatus) || ESTADOS[0];
@@ -33,29 +53,26 @@ function StatusDropdown({ currentStatus, onSelect }: { currentStatus: string | n
         <DropdownMenu.Content
           align="end"
           sideOffset={8}
-          className="w-44 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-200 outline-none"
+          className="w-44 bg-[#1E293B] border border-slate-700 rounded-2xl shadow-2xl overflow-hidden z-[100] animate-in fade-in slide-in-from-top-2 duration-200 outline-none"
         >
           {ESTADOS.map((estado) => (
             <DropdownMenu.Item
               key={estado.value}
               onSelect={() => onSelect(estado.value)}
-              className={`w-full px-4 py-3 text-[10px] font-black uppercase tracking-widest flex items-center justify-between transition-all outline-none cursor-pointer hover:bg-slate-50 focus:bg-slate-50 ${
-                estado.value === currentStatus ? estado.color : 'text-slate-600'
+              className={`w-full px-4 py-3 text-[10px] font-black uppercase tracking-widest flex items-center justify-between transition-all outline-none cursor-pointer hover:bg-white/5 focus:bg-white/5 ${
+                estado.value === currentStatus ? estado.color : 'text-slate-400'
               }`}
             >
               {estado.label}
               {estado.value === currentStatus && <Check size={14} />}
             </DropdownMenu.Item>
           ))}
-          <DropdownMenu.Arrow className="fill-white" />
+          <DropdownMenu.Arrow className="fill-[#1E293B]" />
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   );
 }
-
-import { Search, X, Filter, LayoutGrid } from 'lucide-react';
-import { useState } from 'react';
 
 export default function GuestsView() {
   const { guests, isLoading, updateGuest, deleteGuest } = useGuests();
@@ -102,28 +119,28 @@ export default function GuestsView() {
   if (isLoading) return <div className="p-20 text-center animate-pulse font-bold text-slate-400 uppercase tracking-widest">Cargando invitados...</div>;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-700 mt-12">
       <div className="flex flex-col md:flex-row justify-between items-center px-4 gap-6">
-        <h2 className="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-4">
-          <div className="bg-indigo-100 p-2.5 rounded-2xl text-indigo-600"><Users size={24} /></div>
+        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-4">
+          <div className="bg-indigo-500/20 p-2.5 rounded-2xl text-indigo-400 border border-indigo-500/20"><Users size={24} /></div>
           Control de Asistencia
         </h2>
         <div className="flex gap-3">
           <button 
             onClick={handleExportExcel}
-            className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-6 py-4 rounded-3xl transition-all flex items-center gap-3 font-black text-[10px] uppercase tracking-widest border border-emerald-100 shadow-sm"
+            className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-6 py-4 rounded-3xl transition-all flex items-center gap-3 font-black text-[10px] uppercase tracking-widest border border-emerald-500/20 shadow-sm"
           >
             <FileSpreadsheet size={18} /> Excel (.xlsx)
           </button>
           <button 
             onClick={handleExportPDF}
-            className="bg-slate-50 hover:bg-slate-100 text-slate-600 px-6 py-4 rounded-3xl transition-all flex items-center gap-3 font-black text-[10px] uppercase tracking-widest border border-slate-200 shadow-sm"
+            className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-6 py-4 rounded-3xl transition-all flex items-center gap-3 font-black text-[10px] uppercase tracking-widest border border-slate-700 shadow-sm"
           >
             <Printer size={18} /> PDF
           </button>
           <button 
             onClick={handleOpenAdd}
-            className="premium-gradient hover:shadow-indigo-200/50 shadow-xl text-white px-8 py-4 rounded-3xl transition-all active:scale-95 flex items-center gap-3 font-black text-xs uppercase tracking-widest"
+            className="premium-gradient hover:shadow-indigo-500/20 shadow-xl text-white px-8 py-4 rounded-3xl transition-all active:scale-95 flex items-center gap-3 font-black text-xs uppercase tracking-widest border border-white/10"
           >
             <PlusCircle size={20} /> Añadir
           </button>
@@ -132,18 +149,18 @@ export default function GuestsView() {
       <div />
 
       {/* Search Bar & Filters Ultra-Optimized */}
-      <div className="bg-white p-2 pl-4 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col md:flex-row items-center gap-4 mx-2 md:mx-0">
+      <div className="bg-[#1E293B]/50 backdrop-blur-md p-2 pl-4 rounded-[2.5rem] border border-white/5 shadow-xl shadow-black/20 flex flex-col md:flex-row items-center gap-4 mx-2 md:mx-0">
         <div className="flex-1 w-full flex items-center gap-4 h-14 pr-4">
-          <Search size={22} className="text-slate-300" />
+          <Search size={22} className="text-slate-500" />
           <input 
             type="text"
             placeholder="Buscar por nombre, familia o grupo..."
-            className="flex-1 bg-transparent h-full outline-none text-base font-bold text-slate-700 placeholder:text-slate-300"
+            className="flex-1 bg-transparent h-full outline-none text-base font-bold text-white placeholder:text-slate-600"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {searchTerm && (
-            <button onClick={() => setSearchTerm('')} className="p-2 bg-slate-100 rounded-full text-slate-400 hover:text-rose-500 transition-colors">
+            <button onClick={() => setSearchTerm('')} className="p-2 bg-white/5 rounded-full text-slate-400 hover:text-rose-400 transition-colors">
               <X size={16} />
             </button>
           )}
@@ -156,8 +173,8 @@ export default function GuestsView() {
               onClick={() => setFilterStatus(status === 'Todos' ? null : status)}
               className={`px-6 py-3.5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border ${ 
                 (filterStatus === status || (status === 'Todos' && !filterStatus)) 
-                ? 'bg-slate-900 border-slate-900 text-white shadow-lg' 
-                : 'bg-white border-slate-100 text-slate-400 hover:border-slate-300 hover:text-slate-600'
+                ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
+                : 'bg-transparent border-transparent text-slate-400 hover:bg-white/5 hover:text-slate-200'
               }`}
             >
               {status}
@@ -168,34 +185,34 @@ export default function GuestsView() {
 
       <DataTable 
         columns={[
-          { header: 'Invitado', className: 'w-1/3' },
-          { header: 'Adultos', className: 'text-center w-24' },
-          { header: 'Niños', className: 'text-center w-24' },
-          { header: 'Responsables', className: 'w-1/4' },
-          { header: 'Estado', className: 'w-48' },
-          { header: 'Gestión', className: 'text-right w-32' }
+          { header: 'Invitado', className: 'w-1/3 text-slate-400' },
+          { header: 'Adultos', className: 'text-center w-24 text-slate-400' },
+          { header: 'Niños', className: 'text-center w-24 text-slate-400' },
+          { header: 'Responsables', className: 'w-1/4 text-slate-400' },
+          { header: 'Estado', className: 'w-48 text-slate-400' },
+          { header: 'Gestión', className: 'text-right w-32 text-slate-400' }
         ]}
         isEmpty={filteredGuests.length === 0}
         emptyMessage={searchTerm ? `No se encontraron resultados para "${searchTerm}"` : "No hay invitados registrados todavía."}
       >
         {filteredGuests.map((inv) => (
-          <tr key={inv.id} className="hover:bg-slate-50/40 transition-all group">
+          <tr key={inv.id} className="hover:bg-white/5 transition-all group border-b border-white/5 last:border-0">
             <td className="px-8 py-7">
-              <p className="font-black text-slate-800 text-sm mb-1 uppercase tracking-tight">{inv.nombre}</p>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em]">{inv.vinculo} • <span className="text-indigo-400">{inv.grupo}</span></p>
+              <p className="font-black text-white text-sm mb-1 uppercase tracking-tight">{inv.nombre}</p>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.1em]">{inv.vinculo} • <span className="text-indigo-400">{inv.grupo}</span></p>
             </td>
             <td className="px-4 py-7 text-center">
-              <span className="text-base font-black text-slate-700">{inv.adultos}</span>
+              <span className="text-base font-black text-slate-300">{inv.adultos}</span>
             </td>
             <td className="px-4 py-7 text-center">
-              <span className={`text-base font-black ${inv.ninos! > 0 ? 'text-amber-500 bg-amber-50 px-3 py-1.5 rounded-2xl' : 'text-slate-200'}`}>
+              <span className={`text-base font-black ${inv.ninos! > 0 ? 'text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-2xl border border-amber-500/20' : 'text-slate-600'}`}>
                 {inv.ninos! > 0 ? inv.ninos : '-'}
               </span>
             </td>
             <td className="px-6 py-7">
               <div className="flex flex-wrap gap-2">
                 {inv.responsable?.map((r: string) => (
-                  <span key={r} className="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider border bg-white shadow-sm border-slate-100 text-slate-600">
+                  <span key={r} className={`px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider border ${getResponsableColor(r)}`}>
                     {r}
                   </span>
                 ))}
@@ -208,19 +225,18 @@ export default function GuestsView() {
               />
             </td>
             <td className="px-8 py-7 text-right">
-              {/* Botones siempre visibles */}
               <div className="flex justify-end gap-2">
                 <button 
                   onClick={() => handleOpenEdit(inv.id)}
                   aria-label="Editar invitado"
-                  className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="p-3 text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <Pencil size={18} />
                 </button>
                 <button 
                   onClick={() => deleteGuest.mutate(inv.id)}
                   aria-label="Eliminar invitado"
-                  className="p-3 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-rose-500"
+                  className="p-3 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-rose-500"
                 >
                   <Trash2 size={18} />
                 </button>
