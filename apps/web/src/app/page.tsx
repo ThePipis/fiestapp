@@ -14,6 +14,8 @@ import { useExpenses } from '@/hooks/useExpenses';
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import ConfigView from '@/components/features/ConfigView';
+
 export default function Home() {
   const { activeTab } = useAppStore();
   const { guests } = useGuests();
@@ -27,7 +29,14 @@ export default function Home() {
     const totalConfirmados = confirmados.reduce((acc, i) => acc + (Number(i.adultos) || 0) + (Number(i.ninos) || 0), 0);
     
     let presupuestoTotal = 0;
-    expenses.forEach(e => presupuestoTotal += (Number(e.costo) || 0));
+    let totalPagado = 0;
+    expenses.forEach(e => {
+      const costo = Number(e.costo) || 0;
+      presupuestoTotal += costo;
+      const pagos = e.pagos as Record<string, number> || {};
+      const pagado = Object.values(pagos).reduce((sum, val) => sum + (Number(val) || 0), 0);
+      totalPagado += Math.min(pagado, costo);
+    });
 
     return { 
       totalLista: totalAdultosLista + totalNinosLista, 
@@ -35,7 +44,8 @@ export default function Home() {
       totalNinosLista, 
       totalConfirmados, 
       totalPendientes: (totalAdultosLista + totalNinosLista) - totalConfirmados,
-      presupuestoTotal 
+      presupuestoTotal,
+      totalPagado
     };
   }, [guests, expenses]);
 
@@ -63,11 +73,7 @@ export default function Home() {
               </div>
             )}
             
-            {activeTab === 'consola' && (
-              <div className="bg-white rounded-[3rem] p-20 text-center border border-slate-100 shadow-xl">
-                 <p className="text-slate-300 font-black uppercase tracking-widest text-xs">Panel de administración próximamente...</p>
-              </div>
-            )}
+            {activeTab === 'consola' && <ConfigView />}
           </motion.div>
         </AnimatePresence>
       </div>

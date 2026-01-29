@@ -3,38 +3,43 @@
 import { Users, DollarSign, Calendar, MapPin, Armchair, Baby, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { useEventConfig } from '@/hooks/useEventConfig';
 
 export default function DashboardHeader({ resumen }: { resumen: any }) {
-  const targetDate = new Date('2026-05-23T00:00:00');
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0 });
+  const { config } = useEventConfig();
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
 
   useEffect(() => {
+    const targetDate = new Date(`${config.evento_fecha || '2026-05-23'}T${config.evento_hora || '00:00'}:00`);
     const timer = setInterval(() => {
       const now = new Date();
       const diff = targetDate.getTime() - now.getTime();
       
       if (diff <= 0) {
         clearInterval(timer);
+        setTimeLeft({ days: 0, hours: 0, mins: 0, secs: 0 });
       } else {
         setTimeLeft({
           days: Math.floor(diff / (1000 * 60 * 60 * 24)),
           hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-          mins: Math.floor((diff / 1000 / 60) % 60)
+          mins: Math.floor((diff / 1000 / 60) % 60),
+          secs: Math.floor((diff / 1000) % 60)
         });
       }
-    }, 60000);
+    }, 1000);
 
     // Initial calc
     const now = new Date();
     const diff = targetDate.getTime() - now.getTime();
     setTimeLeft({
-      days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-      mins: Math.floor((diff / 1000 / 60) % 60)
+      days: Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24))),
+      hours: Math.max(0, Math.floor((diff / (1000 * 60 * 60)) % 24)),
+      mins: Math.max(0, Math.floor((diff / 1000 / 60) % 60)),
+      secs: Math.max(0, Math.floor((diff / 1000) % 60))
     });
 
     return () => clearInterval(timer);
-  }, []);
+  }, [config.evento_fecha, config.evento_hora]);
 
   return (
     <header className="relative w-full bg-[#0F172A] min-h-[600px] overflow-hidden rounded-b-[4rem] font-body">
@@ -57,7 +62,7 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
             >
               <img 
                 src="/hero.png" 
-                alt="Mamá Zara" 
+                alt={config.cumpleanera_nombre} 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-transparent to-transparent opacity-60"></div>
@@ -65,7 +70,7 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
               {/* Floating Badge */}
               <div className="absolute bottom-10 left-10 right-10 p-6 glass-card rounded-3xl border border-white/20 bg-white/5 backdrop-blur-xl">
                  <p className="text-white/60 text-[10px] uppercase font-black tracking-widest mb-1">El Comienzo del Viaje</p>
-                 <h3 className="text-white font-display text-2xl font-bold">Zara Gonzales</h3>
+                 <h3 className="text-white font-display text-2xl font-bold">{config.cumpleanera_nombre}</h3>
               </div>
             </motion.div>
             
@@ -83,7 +88,7 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
                 className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-5 py-2.5 rounded-full mb-8"
               >
                 <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
-                <span className="text-amber-400 text-[10px] font-black uppercase tracking-[0.25em]">Celebración 2026</span>
+                <span className="text-amber-400 text-[10px] font-black uppercase tracking-[0.25em]">Celebración {new Date(config.evento_fecha).getFullYear() || 2026}</span>
               </motion.div>
               
               <h1 className="font-display text-white text-6xl md:text-8xl font-black leading-none tracking-tight mb-6">
@@ -93,7 +98,7 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
               </h1>
               
               <p className="text-indigo-100/60 text-lg md:text-xl max-w-xl font-light leading-relaxed mb-10">
-                 Un tributo a la vida, la sabiduría y el amor de Mamá Zara en su septuagésimo aniversario. 
+                 Un tributo a la vida, la sabiduría y el amor de {config.cumpleanera_nombre} en su septuagésimo aniversario. 
               </p>
 
               <div className="flex flex-wrap gap-6 items-center">
@@ -102,8 +107,12 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
                        <MapPin size={22} />
                     </div>
                     <div>
-                       <p className="text-white font-bold text-sm tracking-tight uppercase">Lima, Perú</p>
-                       <p className="text-white/40 text-[10px] font-medium tracking-widest uppercase">El Rímac • Centro Histórico</p>
+                       <p className="text-white font-bold text-sm tracking-tight uppercase">
+                         {config.evento_lugar.includes(',') ? config.evento_lugar.split(',')[0] : config.evento_lugar}
+                       </p>
+                       <p className="text-white/40 text-[10px] font-medium tracking-widest uppercase">
+                         {config.evento_lugar.includes(',') ? config.evento_lugar.split(',').slice(1).join(',').trim() : 'Ubicación del evento'}
+                       </p>
                     </div>
                  </div>
                  <div className="flex items-center gap-4">
@@ -111,59 +120,88 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
                        <Calendar size={22} />
                     </div>
                     <div>
-                       <p className="text-white font-bold text-sm tracking-tight uppercase">Sábado, 23 Mayo</p>
-                       <p className="text-white/40 text-[10px] font-medium tracking-widest uppercase">Gran Recepción • 7:00 PM</p>
+                       <p className="text-white font-bold text-sm tracking-tight uppercase">
+                          {new Date(config.evento_fecha + 'T00:00:00').toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long' })}
+                       </p>
+                       <p className="text-white/40 text-[10px] font-medium tracking-widest uppercase">Gran Recepción • {config.evento_hora}</p>
                     </div>
                  </div>
               </div>
             </div>
 
             {/* Premium Countdown & Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
                {/* Countdown Clock */}
-               <div className="p-8 rounded-[2.5rem] bg-gradient-to-br from-white/10 to-transparent border border-white/10 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 text-white group-hover:scale-110 transition-transform duration-500">
-                     <Clock size={40} />
+               <div className="p-8 md:p-10 rounded-[3.5rem] bg-gradient-to-br from-white/10 to-transparent border border-white/10 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 p-6 opacity-10 text-white group-hover:scale-110 transition-transform duration-500">
+                     <Clock size={48} />
                   </div>
-                  <p className="text-white/40 text-[10px] uppercase font-black tracking-widest mb-6">Cuenta Regresiva</p>
-                  <div className="flex gap-6 items-end">
+                  <p className="text-white/40 text-[10px] uppercase font-black tracking-widest mb-8">Cuenta Regresiva</p>
+                  <div className="flex gap-4 md:gap-6 items-end justify-between md:justify-start">
                      <div className="text-center">
-                        <span className="block text-4xl font-black text-white">{timeLeft.days}</span>
-                        <span className="text-[10px] text-indigo-200/50 uppercase font-bold tracking-widest">Días</span>
+                        <span className="block text-4xl md:text-6xl font-black text-white leading-none mb-2">{timeLeft.days}</span>
+                        <span className="text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Días</span>
                      </div>
                      <div className="text-center">
-                        <span className="block text-4xl font-black text-amber-400">{timeLeft.hours}</span>
-                        <span className="text-[10px] text-indigo-200/50 uppercase font-bold tracking-widest">Horas</span>
+                        <span className="block text-4xl md:text-6xl font-black text-amber-400 leading-none mb-2">{timeLeft.hours}</span>
+                        <span className="text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Horas</span>
                      </div>
                      <div className="text-center">
-                        <span className="block text-4xl font-black text-white/40">{timeLeft.mins}</span>
-                        <span className="text-[10px] text-indigo-200/50 uppercase font-bold tracking-widest">Min</span>
+                        <span className="block text-4xl md:text-6xl font-black text-white/60 leading-none mb-2">{timeLeft.mins}</span>
+                        <span className="text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Min</span>
+                     </div>
+                     <div className="text-center border-l border-white/10 pl-4 md:pl-6">
+                        <span className="block text-4xl md:text-6xl font-black text-indigo-400 animate-pulse leading-none mb-2">
+                           {timeLeft.secs < 10 ? `0${timeLeft.secs}` : timeLeft.secs}
+                        </span>
+                        <span className="text-[10px] text-indigo-200/50 uppercase font-black tracking-widest">Seg</span>
                      </div>
                   </div>
                </div>
 
                {/* Quick Stats Journey */}
-               <div className="p-8 rounded-[2.5rem] bg-white/[0.03] border border-white/10 flex flex-col justify-between">
-                  <p className="text-indigo-200/40 text-[10px] font-black uppercase tracking-widest">Progreso del Evento</p>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-end">
-                       <div className="flex items-center gap-3">
-                          <Users size={16} className="text-emerald-400" />
-                          <span className="text-white text-sm font-bold uppercase tracking-tight">{resumen.totalConfirmados} Confirmados</span>
+               <div className="p-8 md:p-10 rounded-[3.5rem] bg-white/[0.03] border border-white/10 flex flex-col justify-between group">
+                  <p className="text-indigo-200/40 text-[10px] font-black uppercase tracking-widest mb-6">Métricas de Control</p>
+                  <div className="space-y-8">
+                    {/* Confirmados Large */}
+                    <div className="flex justify-between items-center gap-4">
+                       <div className="flex items-center gap-4 md:gap-6">
+                          <div className="p-3 md:p-4 bg-emerald-500/10 rounded-2xl text-emerald-400 group-hover:scale-110 transition-transform">
+                             <Users size={32} />
+                          </div>
+                          <div className="flex flex-col">
+                             <span className="text-4xl md:text-5xl font-black text-white leading-none">{resumen.totalConfirmados}</span>
+                             <span className="text-[10px] text-emerald-400 font-black uppercase tracking-[0.2em] mt-1">Confirmados</span>
+                          </div>
                        </div>
-                       <span className="text-emerald-400/60 text-[10px] font-black">{Math.round((resumen.totalConfirmados / Math.max(1, resumen.totalLista)) * 100)}%</span>
+                       
+                       <div className="flex items-center gap-4 border-l border-white/5 pl-4 md:pl-6">
+                          <div className="text-right">
+                             <span className="text-3xl md:text-4xl font-black text-amber-400 leading-none block mb-1">{resumen.totalPendientes}</span>
+                             <span className="text-white/30 text-[9px] font-black uppercase tracking-widest">Pendientes</span>
+                          </div>
+                       </div>
                     </div>
-                    <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden p-[1px] border border-white/5">
+
+                    {/* Progress Bar Larger */}
+                    <div className="w-full bg-white/5 h-3 rounded-full overflow-hidden p-[1px] border border-white/5">
                         <div 
-                          className="h-full bg-emerald-500 rounded-full transition-all duration-1000 ease-out"
+                          className="h-full bg-gradient-to-r from-emerald-500 to-amber-500 rounded-full transition-all duration-1000 ease-out"
                           style={{ width: `${(resumen.totalConfirmados / Math.max(1, resumen.totalLista)) * 100}%` }}
                         />
                     </div>
-                    <div className="flex justify-between items-end">
-                       <div className="flex items-center gap-3">
-                          <DollarSign size={16} className="text-indigo-400" />
-                          <span className="text-white text-sm font-bold uppercase tracking-tight">Presupuesto Ejecutado</span>
-                       </div>
+
+                    {/* Presupuesto Large */}
+                    <div className="flex items-center gap-4 md:gap-6 pt-2 border-t border-white/5">
+                        <div className="p-3 md:p-4 bg-indigo-500/10 rounded-2xl text-indigo-400 group-hover:scale-110 transition-transform">
+                           <DollarSign size={32} />
+                        </div>
+                        <div className="flex flex-col">
+                           <span className="text-3xl md:text-4xl font-black text-white leading-none">
+                              S/ {resumen.totalPagado.toLocaleString('es-PE')}
+                           </span>
+                           <span className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.2em] mt-1">Presupuesto Ejecutado</span>
+                        </div>
                     </div>
                   </div>
                </div>

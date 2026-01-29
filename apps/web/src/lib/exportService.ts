@@ -283,29 +283,32 @@ export function exportExpensesToPDF(expenses: Tables<'gastos'>[]) {
 
   // Footer with totals
   const finalY = (doc as any).lastAutoTable.finalY || 100;
+  const cardWidth = 85;
+  const spacing = 5;
+  const startX = 16; // Margen izquierdo
   
   doc.setFillColor(16, 185, 129);
-  doc.roundedRect(20, finalY + 10, 100, 25, 3, 3, 'F');
+  doc.roundedRect(startX, finalY + 10, cardWidth, 25, 3, 3, 'F');
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
-  doc.text('TOTAL PRESUPUESTO', 30, finalY + 20);
+  doc.text('TOTAL PRESUPUESTO', startX + 10, finalY + 20);
   doc.setFontSize(14);
-  doc.text(`S/ ${totalCosto.toFixed(2)}`, 30, finalY + 30);
+  doc.text(`S/ ${totalCosto.toFixed(2)}`, startX + 10, finalY + 30);
 
   doc.setFillColor(99, 102, 241);
-  doc.roundedRect(130, finalY + 10, 100, 25, 3, 3, 'F');
+  doc.roundedRect(startX + cardWidth + spacing, finalY + 10, cardWidth, 25, 3, 3, 'F');
   doc.setFontSize(10);
-  doc.text('TOTAL PAGADO', 140, finalY + 20);
+  doc.text('TOTAL PAGADO', startX + cardWidth + spacing + 10, finalY + 20);
   doc.setFontSize(14);
-  doc.text(`S/ ${totalPagado.toFixed(2)}`, 140, finalY + 30);
+  doc.text(`S/ ${totalPagado.toFixed(2)}`, startX + cardWidth + spacing + 10, finalY + 30);
 
   doc.setFillColor(245, 158, 11);
-  doc.roundedRect(240, finalY + 10, 100, 25, 3, 3, 'F');
+  doc.roundedRect(startX + (cardWidth + spacing) * 2, finalY + 10, cardWidth, 25, 3, 3, 'F');
   doc.setFontSize(10);
-  doc.text('PENDIENTE', 250, finalY + 20);
+  doc.text('PENDIENTE', startX + (cardWidth + spacing) * 2 + 10, finalY + 20);
   doc.setFontSize(14);
-  doc.text(`S/ ${pendienteTotal.toFixed(2)}`, 250, finalY + 30);
+  doc.text(`S/ ${pendienteTotal.toFixed(2)}`, startX + (cardWidth + spacing) * 2 + 10, finalY + 30);
 
   const fileName = `Presupuesto_Fiesta_${new Date().toISOString().split('T')[0]}.pdf`;
   doc.save(fileName);

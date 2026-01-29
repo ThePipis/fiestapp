@@ -1,4 +1,4 @@
-¿'use client';
+'use client';
 
 import { useExpenses } from '@/hooks/useExpenses';
 import { Pencil, Trash2, PlusCircle, DollarSign, FileSpreadsheet, Printer, Wallet, PieChart, Search, X } from 'lucide-react';
