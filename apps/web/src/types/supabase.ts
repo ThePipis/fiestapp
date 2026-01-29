@@ -37,6 +37,7 @@ export type Database = {
           pagos?: Json | null
           responsable?: string[] | null
         }
+        Relationships: []
       }
       invitados: {
         Row: {
@@ -72,6 +73,7 @@ export type Database = {
           responsable?: string[] | null
           vinculo?: string | null
         }
+        Relationships: []
       }
       tareas: {
         Row: {
@@ -95,7 +97,25 @@ export type Database = {
           id?: string
           responsable?: string | null
         }
+        Relationships: []
       }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }
+
+// Helper types for easier use
+export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row']
+export type InsertTables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert']
+export type UpdateTables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update']

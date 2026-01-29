@@ -1,0 +1,41 @@
+{
+  "tech_stack": ["TypeScript", "Next.js", "React", "Tailwind CSS", "Zustand", "TanStack Query", "Radix UI", "Zod", "Supabase"],
+  "features": [
+    {
+      "name": "Dashboard Header",
+      "description": "Header component showing visualization toggles and summary metrics",
+      "files": ["apps/web/src/components/features/DashboardHeader.tsx"]
+    },
+    {
+      "name": "Expense Management",
+      "description": "Form to add/edit expenses and table view to list them with status tracking",
+      "files": [
+        "apps/web/src/components/features/ExpenseForm.tsx",
+        "apps/web/src/components/features/ExpensesView.tsx",
+        "apps/web/src/hooks/useExpenses.ts"
+      ]
+    },
+    {
+      "name": "Guest Management",
+      "description": "Form to manage guests and table view for invitations and rsvp status",
+      "files": [
+        "apps/web/src/components/features/GuestForm.tsx",
+        "apps/web/src/components/features/GuestsView.tsx",
+        "apps/web/src/hooks/useGuests.ts"
+      ]
+    },
+    {
+      "name": "Task Management",
+      "description": "View to manage tasks",
+      "files": [
+        "apps/web/src/components/features/TasksView.tsx",
+        "apps/web/src/hooks/useTasks.ts"
+      ]
+    },
+    {
+      "name": "Export Service",
+      "description": "Utility to export data to Excel/PDF",
+      "files": ["apps/web/src/lib/exportService.ts"]
+    }
+  ]
+}

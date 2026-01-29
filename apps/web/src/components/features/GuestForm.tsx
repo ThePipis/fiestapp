@@ -1,11 +1,28 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GuestSchema, Guest } from '@/schemas';
+import { z } from 'zod';
 import { useGuests } from '@/hooks/useGuests';
 import { useAppStore } from '@/store/useAppStore';
 import { useEffect } from 'react';
+import type { InsertTables } from '@/types/supabase';
+import { Check, Save } from 'lucide-react';
+
+const RESPONSABLES = ['Jose', 'Luis', 'Carlos', 'Zara'] as const;
+
+// Schema compatible con los tipos de Supabase
+const GuestFormSchema = z.object({
+  nombre: z.string().min(2, "El nombre es obligatorio"),
+  vinculo: z.string().optional().nullable(),
+  grupo: z.string().optional().nullable(),
+  adultos: z.number().int().min(0).optional().nullable(),
+  ninos: z.number().int().min(0).optional().nullable(),
+  responsable: z.array(z.string()).optional().nullable(),
+  estado: z.string().optional().nullable(),
+});
+
+type GuestFormData = z.infer<typeof GuestFormSchema>;
 
 export default function GuestForm() {
   const { guests, createGuest, updateGuest } = useGuests();
@@ -13,8 +30,8 @@ export default function GuestForm() {
   
   const editingGuest = guests.find(g => g.id === editingId);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<Guest>({
-    resolver: zodResolver(GuestSchema),
+  const { register, handleSubmit, formState: { errors }, reset, control, watch, setValue } = useForm<GuestFormData>({
+    resolver: zodResolver(GuestFormSchema),
     defaultValues: {
       nombre: '',
       vinculo: '',
@@ -26,25 +43,46 @@ export default function GuestForm() {
     }
   });
 
+  const selectedResponsables = watch('responsable') || [];
+
+  const toggleResponsable = (name: string) => {
+    const current = selectedResponsables || [];
+    if (current.includes(name)) {
+      setValue('responsable', current.filter(r => r !== name));
+    } else {
+      setValue('responsable', [...current, name]);
+    }
+  };
+
   useEffect(() => {
     if (editingGuest) {
       reset({
         nombre: editingGuest.nombre,
-        vinculo: editingGuest.vinculo || '',
-        grupo: editingGuest.grupo || '',
-        adultos: editingGuest.adultos || 1,
-        ninos: editingGuest.ninos || 0,
-        responsable: editingGuest.responsable || [],
-        estado: (editingGuest.estado as any) || 'Pendiente'
+        vinculo: editingGuest.vinculo ?? '',
+        grupo: editingGuest.grupo ?? '',
+        adultos: editingGuest.adultos ?? 1,
+        ninos: editingGuest.ninos ?? 0,
+        responsable: editingGuest.responsable ?? [],
+        estado: editingGuest.estado ?? 'Pendiente'
       });
     }
   }, [editingGuest, reset]);
 
-  const onSubmit = (data: Guest) => {
+  const onSubmit = (data: GuestFormData) => {
+    const payload: InsertTables<'invitados'> = {
+      nombre: data.nombre,
+      vinculo: data.vinculo,
+      grupo: data.grupo,
+      adultos: data.adultos,
+      ninos: data.ninos,
+      responsable: data.responsable,
+      estado: data.estado,
+    };
+
     if (editingId) {
-      updateGuest.mutate({ id: editingId, updates: data });
+      updateGuest.mutate({ id: editingId, updates: payload });
     } else {
-      createGuest.mutate(data);
+      createGuest.mutate(payload);
     }
     setIsModalOpen(false);
   };
@@ -87,11 +125,50 @@ export default function GuestForm() {
            <label className={labelClasses}>Niños</label>
            <input type="number" {...register("ninos", { valueAsNumber: true })} className={inputClasses} />
         </div>
+
+        {/* Responsables - Selección Múltiple */}
+        <div className="col-span-2">
+          <label className={labelClasses}>Responsables (Múltiple)</label>
+          <div className="grid grid-cols-2 gap-3">
+            {RESPONSABLES.map((name) => {
+              const isSelected = selectedResponsables.includes(name);
+              return (
+                <button
+                  key={name}
+                  type="button"
+                  onClick={() => toggleResponsable(name)}
+                  className={`
+                    flex items-center justify-center gap-2 py-4 px-6 rounded-2xl font-bold text-sm uppercase tracking-wider
+                    transition-all duration-200 border-2
+                    ${isSelected 
+                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-200' 
+                      : 'bg-white text-slate-500 border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
+                    }
+                  `}
+                >
+                  {isSelected && <Check className="w-4 h-4" />}
+                  {name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
-      <div className="pt-6">
-        <button type="submit" className="w-full premium-gradient text-white font-black uppercase tracking-widest text-xs py-5 rounded-3xl shadow-xl shadow-indigo-100 active:scale-95 transition-all">
-          {editingId ? 'Guardar Cambios' : 'Registrar Invitado'}
+      <div className="pt-6 grid grid-cols-2 gap-4">
+        <button 
+          type="button" 
+          onClick={() => setIsModalOpen(false)}
+          className="w-full bg-white text-slate-500 font-black uppercase tracking-widest text-xs py-5 rounded-3xl border-2 border-slate-200 hover:border-slate-300 transition-all"
+        >
+          Cerrar
+        </button>
+        <button 
+          type="submit" 
+          className="w-full premium-gradient text-white font-black uppercase tracking-widest text-xs py-5 rounded-3xl shadow-xl shadow-indigo-200 active:scale-95 transition-all flex items-center justify-center gap-2"
+        >
+          <Save className="w-4 h-4" />
+          {editingId ? 'Guardar Cambios' : 'Guardar Cambios'}
         </button>
       </div>
     </form>

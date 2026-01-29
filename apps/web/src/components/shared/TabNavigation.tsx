@@ -1,44 +1,57 @@
 'use client';
 
-import { Users, DollarSign, ClipboardList, Sparkles, Database } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Users, DollarSign, ClipboardList, Sparkles, LayoutGrid } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/store/useAppStore';
 
 const TABS = [
-  { id: 'invitados', label: 'Invitados', icon: Users },
-  { id: 'presupuesto', label: 'Presupuesto', icon: DollarSign },
-  { id: 'logistica', label: 'Logística', icon: ClipboardList },
-  { id: 'asistente', label: 'Asistente ✨', icon: Sparkles },
-  { id: 'consola', label: 'Configuración 🛠️', icon: Database }
+  { id: 'invitados', label: 'Invitados', icon: Users, color: 'bg-indigo-500' },
+  { id: 'presupuesto', label: 'Presupuesto', icon: DollarSign, color: 'bg-emerald-500' },
+  { id: 'logistica', label: 'Logística', icon: ClipboardList, color: 'bg-amber-500' },
+  { id: 'asistente', label: 'AI Zara', icon: Sparkles, color: 'bg-fuchsia-500' },
+  { id: 'consola', label: 'Config', icon: LayoutGrid, color: 'bg-slate-500' }
 ];
 
 export default function TabNavigation() {
   const { activeTab, setActiveTab } = useAppStore();
 
   return (
-    <div className="max-w-7xl mx-auto -mt-10 px-6 relative z-20 mb-12">
-      <nav className="bg-white/80 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl p-2.5 flex gap-2 border border-white overflow-x-auto no-scrollbar">
+    <div className="fixed bottom-6 left-0 right-0 z-50 flex justify-center pointer-events-none px-4">
+      <nav className="pointer-events-auto bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl shadow-indigo-900/10 rounded-[2.5rem] p-2 flex items-center gap-1 max-w-full overflow-x-auto no-scrollbar ring-1 ring-slate-900/5">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-3 py-5 px-8 rounded-3xl text-[11px] font-black uppercase tracking-[0.15em] transition-all whitespace-nowrap relative group ${
-                isActive ? 'text-white' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+              className={`relative flex items-center gap-3 px-5 py-4 rounded-[2rem] transition-all duration-300 group outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 ${ 
+                isActive ? '' : 'hover:bg-slate-50 active:scale-95'
               }`}
             >
               {isActive && (
-                <motion.div 
-                  layoutId="activeTabBadge"
-                  className="absolute inset-0 premium-gradient rounded-3xl shadow-xl shadow-indigo-200"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                <motion.div
+                  layoutId="activeTabPill"
+                  className="absolute inset-0 bg-[#0F172A] rounded-[2rem] shadow-lg"
+                  transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
                 />
               )}
-              <span className="relative z-10 flex items-center gap-3">
-                <tab.icon size={18} className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-indigo-500'} />
-                {tab.label}
-              </span>
+              
+              <div className={`relative z-10 transition-colors duration-300 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`}>
+                <tab.icon size={22} className="stroke-[2.5px]" />
+              </div>
+              
+              <AnimatePresence mode="popLayout">
+                {isActive && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0, x: -10 }}
+                    animate={{ opacity: 1, width: 'auto', x: 0 }}
+                    exit={{ opacity: 0, width: 0, x: -10 }}
+                    className="relative z-10 text-xs font-black uppercase tracking-wider text-white whitespace-nowrap overflow-hidden pr-2"
+                  >
+                    {tab.label}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </button>
           );
         })}

@@ -1,28 +1,28 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { Database } from '@/types/supabase';
-
-type TaskRow = Database['public']['Tables']['tareas']['Row'];
-type TaskInsert = Database['public']['Tables']['tareas']['Insert'];
-type TaskUpdate = Database['public']['Tables']['tareas']['Update'];
+import type { Tables, InsertTables, UpdateTables } from '@/types/supabase';
 
 export const useTasks = () => {
   const queryClient = useQueryClient();
 
-  const { data: tasks = [], isLoading, error } = useQuery<TaskRow[]>({
+  const { data: tasks = [], isLoading, error } = useQuery({
     queryKey: ['tareas'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('tareas')
-        .select('*');
+        .select('*')
+        .order('created_at', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return data as Tables<'tareas'>[];
     },
   });
 
   const createTask = useMutation({
-    mutationFn: async (newTask: TaskInsert) => {
-      const { data, error } = await supabase.from('tareas').insert(newTask).select();
+    mutationFn: async (newTask: InsertTables<'tareas'>) => {
+      const { data, error } = await supabase
+        .from('tareas')
+        .insert(newTask)
+        .select();
       if (error) throw error;
       return data;
     },
@@ -32,8 +32,12 @@ export const useTasks = () => {
   });
 
   const updateTask = useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: TaskUpdate }) => {
-      const { data, error } = await supabase.from('tareas').update(updates).eq('id', id).select();
+    mutationFn: async ({ id, updates }: { id: string; updates: UpdateTables<'tareas'> }) => {
+      const { data, error } = await supabase
+        .from('tareas')
+        .update(updates)
+        .eq('id', id)
+        .select();
       if (error) throw error;
       return data;
     },

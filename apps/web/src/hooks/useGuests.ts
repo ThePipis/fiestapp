@@ -1,29 +1,28 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { Database } from '@/types/supabase';
-import { Guest } from '@/schemas';
-
-type GuestRow = Database['public']['Tables']['invitados']['Row'];
-type GuestInsert = Database['public']['Tables']['invitados']['Insert'];
-type GuestUpdate = Database['public']['Tables']['invitados']['Update'];
+import type { Tables, InsertTables, UpdateTables } from '@/types/supabase';
 
 export const useGuests = () => {
   const queryClient = useQueryClient();
 
-  const { data: guests = [], isLoading, error } = useQuery<GuestRow[]>({
+  const { data: guests = [], isLoading, error } = useQuery({
     queryKey: ['invitados'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('invitados')
-        .select('*');
+        .select('*')
+        .order('nombre');
       if (error) throw error;
-      return data || [];
+      return data as Tables<'invitados'>[];
     },
   });
 
   const createGuest = useMutation({
-    mutationFn: async (newGuest: GuestInsert) => {
-      const { data, error } = await supabase.from('invitados').insert(newGuest).select();
+    mutationFn: async (newGuest: InsertTables<'invitados'>) => {
+      const { data, error } = await supabase
+        .from('invitados')
+        .insert(newGuest)
+        .select();
       if (error) throw error;
       return data;
     },
@@ -33,8 +32,12 @@ export const useGuests = () => {
   });
 
   const updateGuest = useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: GuestUpdate }) => {
-      const { data, error } = await supabase.from('invitados').update(updates).eq('id', id).select();
+    mutationFn: async ({ id, updates }: { id: string; updates: UpdateTables<'invitados'> }) => {
+      const { data, error } = await supabase
+        .from('invitados')
+        .update(updates)
+        .eq('id', id)
+        .select();
       if (error) throw error;
       return data;
     },

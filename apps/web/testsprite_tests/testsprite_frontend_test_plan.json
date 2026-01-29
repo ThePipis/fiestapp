@@ -1,0 +1,446 @@
+[
+  {
+    "id": "TC001",
+    "title": "Dashboard Header Displays Real-Time Metrics Correctly",
+    "description": "Verify that the dashboard header correctly shows real-time summary metrics excluding canceled guests and updates metrics immediately after data changes.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Dashboard home view."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the dashboard header displays guest count excluding canceled guests."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that budget and task metrics are displayed with correct real-time values."
+      },
+      {
+        "type": "action",
+        "description": "Add a new guest and mark one guest as canceled."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that guest count updates immediately excluding the canceled guest."
+      },
+      {
+        "type": "action",
+        "description": "Add an expense and mark a task completed."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify budget and task metrics update in real-time to reflect changes."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Guest Management: Add a New Guest Successfully",
+    "description": "Validate that users can add a new guest with all required fields and that the new guest appears in the guest list and dashboard metrics.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Guests tab."
+      },
+      {
+        "type": "action",
+        "description": "Open the add new guest form and input valid guest details following validation rules."
+      },
+      {
+        "type": "action",
+        "description": "Submit the form."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the guest is added to the guest list with correct details."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the dashboard guest metrics increment accordingly."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Guest Management: Form Validation for Adding/Editing Guests",
+    "description": "Ensure form validation works properly enforcing required fields and minimum character limits with live feedback on validation errors on the guest form.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to add or edit guest form."
+      },
+      {
+        "type": "action",
+        "description": "Leave required fields empty and input invalid data violating min length and schema rules."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify live validation errors are shown next to the respective fields."
+      },
+      {
+        "type": "action",
+        "description": "Correct the fields with valid data."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that validation errors disappear and the form allows submission."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Guest Management: Change Guest Attendance Status",
+    "description": "Check that changing a guest's attendance status via the dropdown using React Portals updates UI and persists the change in the backend.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Guests tab."
+      },
+      {
+        "type": "action",
+        "description": "Select a guest and change their attendance status using the dropdown."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the UI reflects the updated status immediately."
+      },
+      {
+        "type": "action",
+        "description": "Reload or revisit the guest list."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm the updated status persists and matches backend data."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Guest Management: Delete a Guest",
+    "description": "Validate the functionality to delete a guest from the guest list updates UI and backend, and dashboard metrics update accordingly.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Guests tab."
+      },
+      {
+        "type": "action",
+        "description": "Delete a guest from the list."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the guest is removed from the list immediately."
+      },
+      {
+        "type": "action",
+        "description": "Check the dashboard guest metrics update to reflect deletion."
+      },
+      {
+        "type": "assertion",
+        "description": "Reload or revisit to confirm guest removal persists in backend."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Budget Management: Add New Expense with Proper Validation",
+    "description": "Ensure expenses can be added using the expense form with correct fields following schema validations and feedback on errors.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Budget tab."
+      },
+      {
+        "type": "action",
+        "description": "Open the add expense form and input expense data missing required fields or with invalid values."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the form shows live validation errors for missing or incorrect data."
+      },
+      {
+        "type": "action",
+        "description": "Input valid expense details and submit."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new expense appears in the expense list."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Budget Management: Track Partial and Full Payments",
+    "description": "Verify that payments made by multiple responsible parties can be recorded per expense and that the payment progress visualization updates correctly in real-time.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Budget tab."
+      },
+      {
+        "type": "action",
+        "description": "Select an existing expense."
+      },
+      {
+        "type": "action",
+        "description": "Record partial payment from one responsible party."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the payment progress bar updates to reflect partial payment."
+      },
+      {
+        "type": "action",
+        "description": "Record remaining payment(s) from other responsible party(ies)."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify payment progress bar shows full payment completion."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Budget Management: Edit and Delete Expenses",
+    "description": "Test that expenses can be edited and deleted with immediate UI updates and backend persistence.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Budget tab."
+      },
+      {
+        "type": "action",
+        "description": "Edit an existing expense with valid data and save."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that the expense list reflects the updated details immediately."
+      },
+      {
+        "type": "action",
+        "description": "Delete an expense."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the expense is removed from the list and backend."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Task Management: Mark Tasks as Completed and Uncompleted",
+    "description": "Confirm tasks can be toggled between completed and uncompleted states with instant database synchronization and UI update.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Logistics tab."
+      },
+      {
+        "type": "action",
+        "description": "Toggle a task to completed."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify task state changes visually and is persisted in backend."
+      },
+      {
+        "type": "action",
+        "description": "Toggle the same task back to uncompleted."
+      },
+      {
+        "type": "assertion",
+        "description": "Check the UI and backend reflect the updated uncompleted status."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Task Management: Delete Completed Task",
+    "description": "Validate that deleting a completed task removes it from UI and backend immediately with appropriate user feedback.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Logistics tab."
+      },
+      {
+        "type": "action",
+        "description": "Delete a completed task."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task is removed from the list and not visible upon page refresh."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "Export Function: Export Guest Data to Excel and PDF",
+    "description": "Test that guest data can be exported accurately into Excel and PDF formats reflecting current filtered data and structure.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Guests tab."
+      },
+      {
+        "type": "action",
+        "description": "Trigger export to Excel."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the downloaded Excel file contains current guest data accurately."
+      },
+      {
+        "type": "action",
+        "description": "Trigger export to PDF."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the downloaded PDF accurately reflects the guest list and data."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Export Function: Export Expense Data to Excel and PDF",
+    "description": "Ensure expense data exports to Excel and PDF formats correctly representing current expense statuses and payments.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Budget tab."
+      },
+      {
+        "type": "action",
+        "description": "Trigger export to Excel."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the exported Excel file contains all expense details, including payments and status."
+      },
+      {
+        "type": "action",
+        "description": "Trigger export to PDF."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the exported PDF accurately reflects expense data and visual progress."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "UI/UX States: Loading and Empty Data Feedback",
+    "description": "Verify loading indicators display during data fetching and appropriate empty state messages appear when no guests, expenses, or tasks exist.",
+    "category": "ui",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate slow network or server delay on navigating to Guests, Budget, and Logistics tabs."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify loading indicators appear during data fetching."
+      },
+      {
+        "type": "action",
+        "description": "Clear all guests, expenses, and tasks from backend temporarily."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that empty data messages are shown for each tab."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "UI/UX States: Error Handling During Data Operations",
+    "description": "Confirm that the system gracefully handles errors during CRUD operations with clear error messaging and no UI crashes.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate backend failure or network error during guest addition, expense creation, and task update."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the UI shows appropriate error messages using TanStack Query error boundaries."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that application state remains stable and user can retry operations."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "SPA Navigation: Tab Switching between Guests, Budget, and Logistics",
+    "description": "Test that navigation between tabs in the SPA is seamless without page reloads and state is preserved appropriately.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate between Guests, Budget, and Logistics tabs multiple times."
+      },
+      {
+        "type": "assertion",
+        "description": "Confirm that the URL updates correctly using Next.js routing without full page reloads."
+      },
+      {
+        "type": "assertion",
+        "description": "Check that form states and list data persist or reload correctly with smooth transitions."
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Accessibility: Dropdown and Interactive Elements Usability",
+    "description": "Ensure all dropdowns, especially status change dropdowns using React Portals, and other interactive UI elements are fully accessible and functional.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Guests tab and open status change dropdown for a guest."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dropdown is reachable via keyboard and screen readers."
+      },
+      {
+        "type": "action",
+        "description": "Interact with dropdown to change status using keyboard and mouse."
+      },
+      {
+        "type": "assertion",
+        "description": "Check UI updates correctly and focus management is proper."
+      }
+    ]
+  }
+]

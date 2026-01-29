@@ -1,0 +1,16 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "web",
+    "projectPath": "d:\\Apps\\fiestapp\\apps\\web",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-fdG_-YbDN7Mw86D658W04-9a_1Iuqa64qdcfQpWxLdCzRpFw9a4uxigctBVVq7jS9tGf_CG5ehZoPX8UDcggH5LCh3kFBfqRo1_7q21DYNwO98gyJ57qLTV7R47NUQ_aNgM"
+    }
+  },
+  "proxy": "http://bfaef44a-4c69-4d8a-b3f7-2ce85b5f73bb:uaFHU2vbKIsErLT5zENki99sAVSoyrfJ@tun.testsprite.com:8080"
+}

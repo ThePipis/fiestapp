@@ -7,6 +7,7 @@ import ExpensesView from '@/components/features/ExpensesView';
 import TasksView from '@/components/features/TasksView';
 import ModalContainer from '@/components/shared/ModalContainer';
 import GuestForm from '@/components/features/GuestForm';
+import ExpenseForm from '@/components/features/ExpenseForm';
 import { useAppStore } from '@/store/useAppStore';
 import { useGuests } from '@/hooks/useGuests';
 import { useExpenses } from '@/hooks/useExpenses';
@@ -71,8 +72,17 @@ export default function Home() {
         </AnimatePresence>
       </div>
 
-      <ModalContainer title={useAppStore.getState().modalType === 'guest' ? (useAppStore.getState().editingId ? 'Editar Invitado' : 'Añadir Invitado') : 'Formulario'}>
+      <ModalContainer 
+        title={
+          useAppStore.getState().modalType === 'guest' 
+            ? (useAppStore.getState().editingId ? 'Editar Invitado' : 'Añadir Invitado') 
+            : useAppStore.getState().modalType === 'expense'
+            ? (useAppStore.getState().editingId ? 'Editar Registro' : 'Añadir Registro')
+            : 'Formulario'
+        }
+      >
         {useAppStore.getState().modalType === 'guest' && <GuestForm />}
+        {useAppStore.getState().modalType === 'expense' && <ExpenseForm />}
       </ModalContainer>
     </main>
   );

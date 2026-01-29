@@ -1,28 +1,28 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import { Database } from '@/types/supabase';
-
-type ExpenseRow = Database['public']['Tables']['gastos']['Row'];
-type ExpenseInsert = Database['public']['Tables']['gastos']['Insert'];
-type ExpenseUpdate = Database['public']['Tables']['gastos']['Update'];
+import type { Tables, InsertTables, UpdateTables } from '@/types/supabase';
 
 export const useExpenses = () => {
   const queryClient = useQueryClient();
 
-  const { data: expenses = [], isLoading, error } = useQuery<ExpenseRow[]>({
+  const { data: expenses = [], isLoading, error } = useQuery({
     queryKey: ['gastos'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('gastos')
-        .select('*');
+        .select('*')
+        .order('item');
       if (error) throw error;
-      return data || [];
+      return data as Tables<'gastos'>[];
     },
   });
 
   const createExpense = useMutation({
-    mutationFn: async (newExpense: ExpenseInsert) => {
-      const { data, error } = await supabase.from('gastos').insert(newExpense).select();
+    mutationFn: async (newExpense: InsertTables<'gastos'>) => {
+      const { data, error } = await supabase
+        .from('gastos')
+        .insert(newExpense)
+        .select();
       if (error) throw error;
       return data;
     },
@@ -32,8 +32,12 @@ export const useExpenses = () => {
   });
 
   const updateExpense = useMutation({
-    mutationFn: async ({ id, updates }: { id: string; updates: ExpenseUpdate }) => {
-      const { data, error } = await supabase.from('gastos').update(updates).eq('id', id).select();
+    mutationFn: async ({ id, updates }: { id: string; updates: UpdateTables<'gastos'> }) => {
+      const { data, error } = await supabase
+        .from('gastos')
+        .update(updates)
+        .eq('id', id)
+        .select();
       if (error) throw error;
       return data;
     },

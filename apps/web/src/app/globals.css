@@ -1,40 +1,54 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Josefin+Sans:wght@300;400;600;700&display=swap');
+@import "tailwindcss";
 
 :root {
-  --primary-50: #f0f4ff;
-  --primary-100: #e0e7ff;
-  --primary-200: #c7d2fe;
-  --primary-300: #a5b4fc;
-  --primary-400: #818cf8;
-  --primary-500: #6366f1;
-  --primary-600: #4f46e5;
-  --primary-700: #4338ca;
-  --primary-800: #3730a3;
-  --primary-900: #312e81;
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Josefin Sans', sans-serif;
 }
 
-@layer base {
-  body {
-    @apply bg-slate-50 text-slate-900 antialiased;
-  }
+.font-display { font-family: var(--font-display); }
+.font-body { font-family: var(--font-body); }
+
+
+@theme {
+  --color-primary-50: #f0f4ff;
+  --color-primary-100: #e0e7ff;
+  --color-primary-200: #c7d2fe;
+  --color-primary-300: #a5b4fc;
+  --color-primary-400: #818cf8;
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-700: #4338ca;
+  --color-primary-800: #3730a3;
+  --color-primary-900: #312e81;
+}
+
+body {
+  background-color: oklch(0.984 0.003 247.858); /* Equivalent to slate-50 */
+  color: oklch(0.279 0.041 260.031); /* Equivalent to slate-900 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/70 border border-white/20 shadow-2xl;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   }
   
   .premium-gradient {
-    @apply bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600;
+    background: linear-gradient(to bottom right, #4f46e5, #7c3aed, #c026d3);
   }
   
   .premium-text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-fuchsia-600;
+    background: linear-gradient(to right, #4f46e5, #c026d3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
-  /* No-scrollbar utility */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

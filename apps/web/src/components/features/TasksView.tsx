@@ -63,8 +63,19 @@ export default function TasksView() {
                   {task.completada ? <CheckCircle2 size={24} /> : <Clock size={24} />}
                 </div>
                 <div className="flex gap-1">
-                  <button className="p-2 text-slate-300 hover:text-indigo-600 transition-colors"><Pencil size={18} /></button>
-                  <button onClick={() => deleteTask.mutate(task.id)} className="p-2 text-slate-300 hover:text-rose-500 transition-colors"><Trash2 size={18} /></button>
+                  <button 
+                    aria-label="Editar tarea"
+                    className="p-2 text-slate-300 hover:text-indigo-600 transition-colors outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <button 
+                    onClick={() => deleteTask.mutate(task.id)} 
+                    aria-label="Eliminar tarea"
+                    className="p-2 text-slate-300 hover:text-rose-500 transition-colors outline-none focus:ring-2 focus:ring-rose-500 rounded-lg"
+                  >
+                    <Trash2 size={18} />
+                  </button>
                 </div>
               </div>
               
@@ -78,10 +89,11 @@ export default function TasksView() {
                 </span>
                 <button 
                   onClick={() => updateTask.mutate({ id: task.id, updates: { completada: !task.completada } })}
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
+                  aria-label={task.completada ? "Marcar como pendiente" : "Marcar como completada"}
+                  className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all outline-none focus:ring-4 ${
                     task.completada 
-                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200' 
-                    : 'bg-slate-100 text-slate-300 hover:bg-indigo-600 hover:text-white'
+                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200 focus:ring-emerald-100' 
+                    : 'bg-slate-100 text-slate-300 hover:bg-indigo-600 hover:text-white focus:ring-indigo-100'
                   }`}
                 >
                   <Check size={24} strokeWidth={3} />

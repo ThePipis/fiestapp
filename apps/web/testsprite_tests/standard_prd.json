@@ -1,0 +1,99 @@
+{
+  "meta": {
+    "project": "Fiestapp",
+    "date": "2026-01-21",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "Fiestapp is a premium web application designed for comprehensive event organization, specifically built for managing a 70th birthday party. It centralizes guest management, detailed budget tracking with individual payments, and task logistics into one interactive platform with real-time data updates.",
+  "core_goals": [
+    "Centralize all event management aspects into a single platform for ease of use and efficiency.",
+    "Provide real-time visualization and status updates on guests, budget, and tasks to enhance event oversight.",
+    "Enable detailed budget control including expense tracking and partial payments from multiple responsible parties.",
+    "Facilitate effortless guest management including attendance tracking and status changes.",
+    "Support logistic task management with immediate update capabilities.",
+    "Offer export functionality for reports in Excel and PDF formats for external review and record keeping."
+  ],
+  "key_features": [
+    "Dashboard header with real-time metrics and visualization toggles excluding canceled guests from totals.",
+    "Guest management with add, edit, delete functions, status change dropdown using React Portals for UI consistency, and data export capabilities.",
+    "Expense management including form for adding/editing expenses, payment tracking per responsible person, automated progress visualization, and export options.",
+    "Task management allowing marking tasks as completed/uncompleted with instant database synchronization and task deletion.",
+    "Robust form validation for guest and expense forms following predefined schemas with live feedback on validation rules.",
+    "SPA architecture with Next.js routing and tab-based navigation for Guests, Budget, and Logistics sections.",
+    "Integration with Supabase as backend for real-time data operations including selections, inserts, updates, and deletes.",
+    "Export service functionality enabling export of guest and expense data into Excel and PDF formats.",
+    "UX states coverage including loading, empty data messaging, error handling via TanStack Query, and success state feedback through modal closures."
+  ],
+  "user_flow_summary": [
+    "User logs into the Fiestapp SPA and lands on the Dashboard home view displaying real-time event overview metrics.",
+    "User navigates to the Guests tab to add a new guest, update attendance status, and verify changes reflected on the Dashboard.",
+    "User accesses the Budget tab to create expenses, record partial and full payments by different responsible individuals, and monitor budget progress visually.",
+    "User utilizes the Logistics tab to mark tasks as completed or pending and deletes completed tasks as necessary with immediate update feedback.",
+    "User exports guest and expense data to Excel or PDF format for reporting or sharing purposes."
+  ],
+  "validation_criteria": [
+    "All forms enforce schema validations with required fields and minimum character/integer limits as per the defined specs.",
+    "Status changes and data updates are immediately reflected on the UI and persisted in Supabase backend.",
+    "Real-time progress bars accurately represent payment statuses in the Budget section.",
+    "Exported reports in Excel and PDF formats accurately reflect current data shown in the application.",
+    "Loading, empty, error, and success UI states are appropriately handled to provide clear user feedback.",
+    "All interactive elements including dropdowns for status changes remain fully accessible and functional across the application.",
+    "The application functions as a single-page app with seamless tab navigation and state management.",
+    "Data integrity is maintained for guest lists, expenses, and task items throughout CRUD operations."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "TypeScript",
+      "Next.js",
+      "React",
+      "Tailwind CSS",
+      "Zustand",
+      "TanStack Query",
+      "Radix UI",
+      "Zod",
+      "Supabase"
+    ],
+    "features": [
+      {
+        "name": "Dashboard Header",
+        "description": "Header component showing visualization toggles and summary metrics",
+        "files": [
+          "apps/web/src/components/features/DashboardHeader.tsx"
+        ]
+      },
+      {
+        "name": "Expense Management",
+        "description": "Form to add/edit expenses and table view to list them with status tracking",
+        "files": [
+          "apps/web/src/components/features/ExpenseForm.tsx",
+          "apps/web/src/components/features/ExpensesView.tsx",
+          "apps/web/src/hooks/useExpenses.ts"
+        ]
+      },
+      {
+        "name": "Guest Management",
+        "description": "Form to manage guests and table view for invitations and rsvp status",
+        "files": [
+          "apps/web/src/components/features/GuestForm.tsx",
+          "apps/web/src/components/features/GuestsView.tsx",
+          "apps/web/src/hooks/useGuests.ts"
+        ]
+      },
+      {
+        "name": "Task Management",
+        "description": "View to manage tasks",
+        "files": [
+          "apps/web/src/components/features/TasksView.tsx",
+          "apps/web/src/hooks/useTasks.ts"
+        ]
+      },
+      {
+        "name": "Export Service",
+        "description": "Utility to export data to Excel/PDF",
+        "files": [
+          "apps/web/src/lib/exportService.ts"
+        ]
+      }
+    ]
+  }
+}
