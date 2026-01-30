@@ -12,15 +12,26 @@ const DEFAULT_CONFIG = {
   evento_hora: '19:00'
 };
 
+// Convertir hora 24h a formato 12h para mostrar
+const formatHora12h = (time24: string): string => {
+  if (!time24) return '7:00 PM';
+  const [hours, minutes] = time24.split(':').map(Number);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const hour12 = hours % 12 || 12;
+  return `${hour12}:${(minutes || 0).toString().padStart(2, '0')} ${period}`;
+};
+
 export default function DashboardHeader({ resumen }: { resumen: any }) {
   const { config } = useEventConfig();
   const [renderConfig, setRenderConfig] = useState(DEFAULT_CONFIG);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
   const [eventYear, setEventYear] = useState(2026);
   const [eventDateLabel, setEventDateLabel] = useState(DEFAULT_CONFIG.evento_fecha);
+  const [horaFormateada, setHoraFormateada] = useState(formatHora12h(DEFAULT_CONFIG.evento_hora));
 
   useEffect(() => {
     setRenderConfig(config || DEFAULT_CONFIG);
+    setHoraFormateada(formatHora12h(config?.evento_hora || DEFAULT_CONFIG.evento_hora));
   }, [config]);
 
   useEffect(() => {
@@ -71,15 +82,15 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
   }, [renderConfig.evento_fecha]);
 
   return (
-    <header className="relative w-full bg-[#0F172A] min-h-[600px] overflow-hidden rounded-b-[4rem] font-body">
+    <header className="relative w-full bg-[#0F172A] h-screen max-h-screen overflow-hidden rounded-b-[4rem] font-body" suppressHydrationWarning>
       {/* Background patterns */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500 rounded-full blur-[120px]"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-amber-500/30 rounded-full blur-[120px]"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-10 md:py-16 lg:py-20 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div className="max-w-7xl mx-auto px-6 py-6 md:py-8 lg:py-10 relative z-10 h-full flex flex-col justify-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
           {/* Column Left: The Portrait */}
           <div className="lg:col-span-5 relative group">
@@ -110,24 +121,24 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
           </div>
 
           {/* Column Right: Information & Pulse */}
-          <div className="lg:col-span-7 flex flex-col gap-10">
+          <div className="lg:col-span-7 flex flex-col gap-4 lg:gap-6">
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-5 py-2.5 rounded-full mb-8"
+                className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-5 py-2.5 rounded-full mb-4"
               >
                 <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
                 <span className="text-amber-400 text-[10px] font-black uppercase tracking-[0.25em]">Celebración {eventYear}</span>
               </motion.div>
               
-              <h1 className="font-display text-white text-5xl md:text-7xl lg:text-8xl font-black leading-none tracking-tight mb-6">
+              <h1 className="font-display text-white text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tight mb-3">
                  70 <span className="text-transparent bg-clip-text premium-gradient">AÑOS</span>
                  <br />
                  DE LUZ
               </h1>
               
-              <p className="text-indigo-100/60 text-lg md:text-xl max-w-xl font-light leading-relaxed mb-10">
+              <p className="text-indigo-100/60 text-lg md:text-xl max-w-xl font-light leading-relaxed mb-4">
                  Un tributo a la vida, la sabiduría y el amor de {renderConfig.cumpleanera_nombre} en su septuagésimo aniversario. 
               </p>
 
@@ -151,16 +162,16 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
                     </div>
                     <div>
                        <p className="text-white font-bold text-sm tracking-tight uppercase">{eventDateLabel}</p>
-                       <p className="text-white/40 text-[10px] font-medium tracking-widest uppercase">Gran Recepción • {renderConfig.evento_hora}</p>
+                       <p className="text-white/40 text-[10px] font-medium tracking-widest uppercase">Gran Recepción • {horaFormateada}</p>
                     </div>
                  </div>
               </div>
             </div>
 
             {/* Premium Countdown & Stats */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                {/* Countdown Clock */}
-               <div className="p-6 md:p-8 rounded-[2rem] bg-gradient-to-br from-white/10 to-transparent border border-white/10 relative overflow-hidden group">
+               <div className="p-4 md:p-5 rounded-2xl bg-gradient-to-br from-white/10 to-transparent border border-white/10 relative overflow-hidden group">
                   <div className="absolute top-4 right-4 opacity-10 text-white pointer-events-none">
                      <Clock size={48} />
                   </div>
@@ -188,7 +199,7 @@ export default function DashboardHeader({ resumen }: { resumen: any }) {
                </div>
 
                {/* Quick Stats */}
-               <div className="p-6 md:p-8 rounded-[2rem] bg-white/[0.03] border border-white/10 flex flex-col gap-6 overflow-hidden">
+               <div className="p-4 md:p-5 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col gap-4 overflow-hidden">
                   <p className="text-indigo-200/40 text-[10px] font-black uppercase tracking-widest">Métricas de Control</p>
                   
                   {/* Confirmados Row */}

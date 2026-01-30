@@ -28,6 +28,30 @@ export default function ExpensesView() {
     return { total, paid, remaining: total - paid };
   }, [expenses]);
 
+  // Calcular gastos por responsable dinámicamente
+  const gastosPorResponsable = useMemo(() => {
+    const responsables: Record<string, number> = {
+      'Carlos': 0,
+      'Luis': 0,
+      'Jose': 0
+    };
+    
+    expenses.forEach(e => {
+      const pagos = e.pagos as Record<string, number> || {};
+      Object.entries(pagos).forEach(([nombre, monto]) => {
+        const nombreNormalizado = nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
+        if (responsables.hasOwnProperty(nombreNormalizado)) {
+          responsables[nombreNormalizado] += Number(monto) || 0;
+        } else {
+          // Añadir nuevo responsable si aparece
+          responsables[nombreNormalizado] = (responsables[nombreNormalizado] || 0) + (Number(monto) || 0);
+        }
+      });
+    });
+    
+    return responsables;
+  }, [expenses]);
+
   const filteredExpenses = expenses.filter(g => {
     const term = searchTerm.toLowerCase();
     const itemMatch = (g.item || '').toLowerCase().includes(term);
@@ -112,6 +136,43 @@ export default function ExpensesView() {
             />
           </div>
         </motion.div>
+      </div>
+
+      {/* Gastos por Responsable */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {Object.entries(gastosPorResponsable).map(([nombre, total], index) => {
+          const colors = [
+            { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400', shadow: 'shadow-blue-500/10', icon: 'bg-blue-500/20 text-blue-400' },
+            { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400', shadow: 'shadow-purple-500/10', icon: 'bg-purple-500/20 text-purple-400' },
+            { bg: 'bg-orange-500/10', border: 'border-orange-500/30', text: 'text-orange-400', shadow: 'shadow-orange-500/10', icon: 'bg-orange-500/20 text-orange-400' },
+          ];
+          const color = colors[index % colors.length];
+          const porcentaje = financeStats.paid > 0 ? Math.round((total / financeStats.paid) * 100) : 0;
+          
+          return (
+            <motion.div
+              key={nombre}
+              whileHover={{ y: -3, scale: 1.02 }}
+              className={`${color.bg} p-6 rounded-[2rem] border ${color.border} shadow-lg ${color.shadow} relative overflow-hidden group`}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className={`p-3 rounded-2xl ${color.icon} border ${color.border}`}>
+                  <DollarSign size={20} />
+                </div>
+                <span className={`text-[10px] font-black uppercase tracking-widest ${color.text}`}>
+                  {porcentaje}% del total pagado
+                </span>
+              </div>
+              <p className={`text-[10px] font-black uppercase tracking-widest ${color.text} mb-2`}>
+                Contribución de
+              </p>
+              <p className="text-2xl font-black text-white mb-1">{nombre}</p>
+              <p className={`text-3xl font-black ${color.text}`}>
+                S/ {total.toLocaleString('es-PE', { minimumFractionDigits: 2 })}
+              </p>
+            </motion.div>
+          );
+        })}
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-center px-4 gap-6">
@@ -214,13 +275,21 @@ export default function ExpensesView() {
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {g.responsable?.map((r) => (
-                    <div key={r} className="flex items-center gap-2 bg-[#0F172A] px-3 py-1.5 rounded-xl border border-slate-700 shadow-sm">
-                      <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
-                      <span className="text-[9px] font-black uppercase text-slate-400">{r}:</span>
-                      <span className="text-[9px] font-black text-white">S/ {pagos[r] || 0}</span>
-                    </div>
-                  ))}
+                  {g.responsable?.map((r, idx) => {
+                    const colors = [
+                      { bg: 'bg-blue-500/15', border: 'border-blue-500/30', dot: 'bg-blue-400', name: 'text-blue-300', amount: 'text-blue-400' },
+                      { bg: 'bg-purple-500/15', border: 'border-purple-500/30', dot: 'bg-purple-400', name: 'text-purple-300', amount: 'text-purple-400' },
+                      { bg: 'bg-orange-500/15', border: 'border-orange-500/30', dot: 'bg-orange-400', name: 'text-orange-300', amount: 'text-orange-400' },
+                    ];
+                    const color = colors[idx % colors.length];
+                    return (
+                      <div key={r} className={`flex items-center gap-2 ${color.bg} px-3 py-2 rounded-xl border ${color.border}`}>
+                        <span className={`w-2 h-2 rounded-full ${color.dot}`}></span>
+                        <span className={`text-xs font-black uppercase ${color.name}`}>{r}:</span>
+                        <span className={`text-xs font-black ${color.amount}`}>S/{pagos[r] || 0}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </td>
               <td className="px-6 py-8 align-middle">
@@ -231,9 +300,15 @@ export default function ExpensesView() {
                     className={`h-full rounded-full transition-all duration-700 ${status === 'Pagado' ? 'bg-emerald-500' : 'bg-indigo-500'}`}
                   />
                 </div>
-                <div className="flex justify-between text-[10px] font-black uppercase tracking-wider">
-                  <span className="text-emerald-400">S/ {paidAmount.toFixed(2)}</span>
-                  <span className="text-slate-500">S/ {Math.max(0, costo - paidAmount).toFixed(2)}</span>
+                <div className="flex justify-between text-sm font-black uppercase tracking-wider">
+                  <div className="flex flex-col">
+                    <span className="text-emerald-400">S/ {paidAmount.toFixed(2)}</span>
+                    <span className="text-[10px] text-emerald-400/60 tracking-widest">Abonado</span>
+                  </div>
+                  <div className="flex flex-col text-right">
+                    <span className="text-rose-400/80">S/ {Math.max(0, costo - paidAmount).toFixed(2)}</span>
+                    <span className="text-[10px] text-rose-400/50 tracking-widest">Pendiente</span>
+                  </div>
                 </div>
               </td>
               <td className="px-6 py-8 text-center">
@@ -253,14 +328,14 @@ export default function ExpensesView() {
                   <button 
                     onClick={() => handleOpenEdit(g.id)} 
                     aria-label="Editar gasto"
-                    className="p-3 text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-indigo-500 bg-transparent border border-transparent shadow-none"
+                    className="p-3 text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     <Pencil size={18} />
                   </button>
                   <button 
                     onClick={() => deleteExpense.mutate(g.id)} 
                     aria-label="Eliminar gasto"
-                    className="p-3 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-rose-500 bg-transparent border border-transparent shadow-none"
+                    className="p-3 text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-rose-500"
                   >
                     <Trash2 size={18} />
                   </button>

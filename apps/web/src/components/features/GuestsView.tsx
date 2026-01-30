@@ -167,19 +167,32 @@ export default function GuestsView() {
         </div>
         
         <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 px-2 md:px-0 no-scrollbar">
-          {['Todos', 'Pendiente', 'Confirmado'].map(status => (
-            <button 
-              key={status} 
-              onClick={() => setFilterStatus(status === 'Todos' ? null : status)}
-              className={`px-6 py-3.5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border ${ 
-                (filterStatus === status || (status === 'Todos' && !filterStatus)) 
-                ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
-                : 'bg-transparent border-transparent text-slate-400 hover:bg-white/5 hover:text-slate-200'
-              }`}
-            >
-              {status}
-            </button>
-          ))}
+          {(() => {
+            // Calcular qué estados existen en los datos
+            const hasPendientes = guests.some(g => g.estado === 'Pendiente');
+            const hasConfirmados = guests.some(g => g.estado === 'Confirmado');
+            const hasCancelados = guests.some(g => g.estado === 'Cancelado');
+            
+            // Construir tabs dinámicamente
+            const tabs: string[] = ['Todos'];
+            if (hasPendientes) tabs.push('Pendiente');
+            if (hasConfirmados) tabs.push('Confirmado');
+            if (hasCancelados) tabs.push('Cancelado');
+            
+            return tabs.map(status => (
+              <button 
+                key={status} 
+                onClick={() => setFilterStatus(status === 'Todos' ? null : status)}
+                className={`px-6 py-3.5 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border ${ 
+                  (filterStatus === status || (status === 'Todos' && !filterStatus)) 
+                  ? 'bg-indigo-600 border-indigo-500 text-white shadow-lg shadow-indigo-500/20' 
+                  : 'bg-transparent border-transparent text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                }`}
+              >
+                {status}
+              </button>
+            ));
+          })()}
         </div>
       </div>
 
@@ -229,14 +242,14 @@ export default function GuestsView() {
                 <button 
                   onClick={() => handleOpenEdit(inv.id)}
                   aria-label="Editar invitado"
-                  className="p-3 text-slate-500 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="p-3 text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-indigo-500"
                 >
                   <Pencil size={18} />
                 </button>
                 <button 
                   onClick={() => deleteGuest.mutate(inv.id)}
                   aria-label="Eliminar invitado"
-                  className="p-3 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-rose-500"
+                  className="p-3 text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 rounded-2xl transition-all outline-none focus:ring-2 focus:ring-rose-500"
                 >
                   <Trash2 size={18} />
                 </button>

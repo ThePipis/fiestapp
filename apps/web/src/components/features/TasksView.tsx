@@ -65,14 +65,14 @@ export default function TasksView() {
                 <div className="flex gap-1">
                   <button 
                     aria-label="Editar tarea"
-                    className="p-2 text-slate-500 hover:text-indigo-400 transition-colors outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg"
+                    className="p-2 text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 transition-colors outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg"
                   >
                     <Pencil size={18} />
                   </button>
                   <button 
                     onClick={() => deleteTask.mutate(task.id)} 
                     aria-label="Eliminar tarea"
-                    className="p-2 text-slate-500 hover:text-rose-400 transition-colors outline-none focus:ring-2 focus:ring-rose-500 rounded-lg"
+                    className="p-2 text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 transition-colors outline-none focus:ring-2 focus:ring-rose-500 rounded-lg"
                   >
                     <Trash2 size={18} />
                   </button>
